@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb
+    restart: always
+    env_file:
+      - ./.env
+    volumes:
+      - mariadb:/var/lib/mysql
+    # healthcheck:
+    #   test: ["CMD", "mysqladmin ping -h localhost"]
+    #   interval: 10s
+    #   timeout: 30s
+    #   retries: 3
+    #   start_period: 30s
+    networks:
+      - my_network
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx
+    restart: always
+    ports:
+      - "443:443"
+    depends_on:
+      - wordpress
+    volumes:
+      - inception:/var/www/wp
+    networks:
+      - my_network
+  wordpress:
+    container_name: wordpress
+    restart: always
+    build: ./requirements/wordpress
+    env_file:
+      - ./.env
+    depends_on:
+      - mariadb
+        # service: healthcheck
+    networks:
+      - my_network
+    volumes:
+      - inception:/var/www/wp
+
+networks:
+  my_network:
+
+volumes:
+  inception:
+  mariadb:
