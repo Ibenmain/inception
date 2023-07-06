@@ -12,7 +12,7 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
-      test: mysqladmin ping -h localhost # ping on databases and check if it healty or not
+      test: mysqladmin ping -h localhost
       interval: 10s
       timeout: 30s
       retries: 3
@@ -42,8 +42,7 @@ services:
     env_file:
       - ./.env
     depends_on:
-      mariadb:
-        condition: service_healthy
+      - mariadb
     networks:
       - my_network
     volumes:
